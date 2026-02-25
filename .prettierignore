@@ -1,0 +1,6 @@
+dist
+src-tauri
+sidecar-drizzle
+node_modules
+*.db
+*.sqlite
