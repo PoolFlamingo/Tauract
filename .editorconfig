@@ -1,0 +1,29 @@
+root = true
+
+[*]
+indent_style = tab
+indent_size = 4
+
+[*.tsx]
+indent_style = tab
+indent_size = 2
+
+[*.json]
+indent_style = tab
+indent_size = 2
+
+[*.scss]
+indent_style = tab
+indent_size = 2
+
+[*.css]
+indent_style = tab
+indent_size = 2
+
+[*.html]
+indent_style = tab
+indent_size = 2
+
+[*.mjml]
+indent_style = tab
+indent_size = 2

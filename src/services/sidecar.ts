@@ -2,26 +2,26 @@ import { Command } from "@tauri-apps/plugin-shell";
 import { appDataDir } from "@tauri-apps/api/path";
 
 interface IpcRequest {
-  id: string;
-  method: string;
-  params?: Record<string, unknown>;
+	id: string;
+	method: string;
+	params?: Record<string, unknown>;
 }
 
 interface IpcSuccessResponse {
-  id: string;
-  result: unknown;
+	id: string;
+	result: unknown;
 }
 
 interface IpcErrorResponse {
-  id: string;
-  error: string;
+	id: string;
+	error: string;
 }
 
 type IpcResponse = IpcSuccessResponse | IpcErrorResponse;
 
 type PendingRequest = {
-  resolve: (value: unknown) => void;
-  reject: (reason: Error) => void;
+	resolve: (value: unknown) => void;
+	reject: (reason: Error) => void;
 };
 
 /**
@@ -32,189 +32,191 @@ type PendingRequest = {
  * init/destroy calls through a single promise chain.
  */
 class SidecarService {
-  private child: Awaited<ReturnType<Command<string>["spawn"]>> | null = null;
-  private pending = new Map<string, PendingRequest>();
-  private requestCounter = 0;
-  private readyResolve: (() => void) | null = null;
-  private initialized = false;
-  private destroying = false;
-  /** Serializes init/destroy to prevent overlapping lifecycle calls */
-  private lifecycleChain: Promise<void> = Promise.resolve();
+	private child: Awaited<ReturnType<Command<string>["spawn"]>> | null = null;
+	private pending = new Map<string, PendingRequest>();
+	private requestCounter = 0;
+	private readyResolve: (() => void) | null = null;
+	private initialized = false;
+	private destroying = false;
+	/** Serializes init/destroy to prevent overlapping lifecycle calls */
+	private lifecycleChain: Promise<void> = Promise.resolve();
 
-  /**
-   * Spawns the sidecar process and waits for it to be ready.
-   * Serialized: concurrent calls queue behind any pending init/destroy.
-   */
-  async init(): Promise<void> {
-    this.lifecycleChain = this.lifecycleChain
-      .then(() => this.doInit())
-      .catch(() => {
-        /* swallow lifecycle errors so the chain stays healthy */
-      });
-    return this.lifecycleChain;
-  }
+	/**
+	 * Spawns the sidecar process and waits for it to be ready.
+	 * Serialized: concurrent calls queue behind any pending init/destroy.
+	 */
+	async init(): Promise<void> {
+		this.lifecycleChain = this.lifecycleChain
+			.then(() => this.doInit())
+			.catch(() => {
+				/* swallow lifecycle errors so the chain stays healthy */
+			});
 
-  private async doInit(): Promise<void> {
-    if (this.initialized && this.child) return;
+		return this.lifecycleChain;
+	}
 
-    // If a destroy just ran, give the OS a tick to fully release the process
-    if (this.destroying) {
-      await new Promise((r) => setTimeout(r, 60));
-    }
+	private async doInit(): Promise<void> {
+		if (this.initialized && this.child) return;
 
-    const dataDir = await appDataDir();
-    const dbPath = `${dataDir}todos.db`;
+		// If a destroy just ran, give the OS a tick to fully release the process
+		if (this.destroying) {
+			await new Promise((r) => setTimeout(r, 60));
+		}
 
-    const readyPromise = new Promise<void>((resolve) => {
-      this.readyResolve = resolve;
-    });
+		const dataDir = await appDataDir();
+		const dbPath = `${dataDir}todos.db`;
 
-    const command = Command.sidecar("binaries/db-sidecar", [dbPath]);
+		const readyPromise = new Promise<void>((resolve) => {
+			this.readyResolve = resolve;
+		});
 
-    command.stdout.on("data", (line: string) => {
-      this.handleStdout(line);
-    });
+		const command = Command.sidecar("binaries/db-sidecar", [dbPath]);
 
-    command.stderr.on("data", (line: string) => {
-      console.debug("[sidecar:stderr]", line);
-    });
+		command.stdout.on("data", (line: string) => {
+			this.handleStdout(line);
+		});
 
-    command.on("close", (data) => {
-      if (this.destroying) {
-        this.destroying = false;
-        return;
-      }
-      console.error(
-        "[sidecar] Process exited unexpectedly with code",
-        data.code
-      );
-      this.child = null;
-      this.initialized = false;
+		command.stderr.on("data", (line: string) => {
+			console.debug("[sidecar:stderr]", line);
+		});
 
-      for (const [id, { reject }] of this.pending) {
-        reject(new Error("Sidecar process terminated unexpectedly"));
-        this.pending.delete(id);
-      }
-    });
+		command.on("close", (data) => {
+			if (this.destroying) {
+				this.destroying = false;
+				return;
+			}
+			console.error(
+				"[sidecar] Process exited unexpectedly with code",
+				data.code
+			);
+			this.child = null;
+			this.initialized = false;
 
-    command.on("error", (error) => {
-      console.error("[sidecar] Process error:", error);
-    });
+			for (const [id, { reject }] of this.pending) {
+				reject(new Error("Sidecar process terminated unexpectedly"));
+				this.pending.delete(id);
+			}
+		});
 
-    this.child = await command.spawn();
-    this.initialized = true;
+		command.on("error", (error) => {
+			console.error("[sidecar] Process error:", error);
+		});
 
-    await readyPromise;
-    console.debug("[sidecar] Connected and ready.");
-  }
+		this.child = await command.spawn();
+		this.initialized = true;
 
-  /**
-   * Handle a line from stdout: parse JSON and correlate to a pending request.
-   */
-  private handleStdout(line: string): void {
-    const trimmed = line.trim();
-    if (!trimmed) return;
+		await readyPromise;
+		console.debug("[sidecar] Connected and ready.");
+	}
 
-    try {
-      const response: IpcResponse = JSON.parse(trimmed);
+	/**
+	 * Handle a line from stdout: parse JSON and correlate to a pending request.
+	 */
+	private handleStdout(line: string): void {
+		const trimmed = line.trim();
+		if (!trimmed) return;
 
-      if (response.id === "__ready__") {
-        this.readyResolve?.();
-        return;
-      }
+		try {
+			const response: IpcResponse = JSON.parse(trimmed);
 
-      const pending = this.pending.get(response.id);
-      if (!pending) {
-        console.warn(
-          "[sidecar] Received response for unknown request:",
-          response.id
-        );
-        return;
-      }
+			if (response.id === "__ready__") {
+				this.readyResolve?.();
+				return;
+			}
 
-      this.pending.delete(response.id);
+			const pending = this.pending.get(response.id);
+			if (!pending) {
+				console.warn(
+				"[sidecar] Received response for unknown request:",
+				response.id
+				);
+				return;
+			}
 
-      if ("error" in response) {
-        pending.reject(new Error(response.error));
-      } else {
-        pending.resolve(response.result);
-      }
-    } catch {
-      console.error("[sidecar] Failed to parse stdout:", trimmed);
-    }
-  }
+			this.pending.delete(response.id);
 
-  /**
-   * Send a request to the sidecar and wait for the correlated response.
-   */
-  async request<T = unknown>(
-    method: string,
-    params?: Record<string, unknown>
-  ): Promise<T> {
-    if (!this.child || !this.initialized) {
-      await this.init();
-    }
+			if ("error" in response) {
+				pending.reject(new Error(response.error));
+			} else {
+				pending.resolve(response.result);
+			}
+		} catch {
+			console.error("[sidecar] Failed to parse stdout:", trimmed);
+		}
+	}
 
-    const id = `req_${++this.requestCounter}_${Date.now()}`;
+	/**
+	 * Send a request to the sidecar and wait for the correlated response.
+	 */
+	async request<T = unknown>(
+		method: string,
+		params?: Record<string, unknown>
+	): Promise<T> {
+		if (!this.child || !this.initialized) {
+		await this.init();
+		}
 
-    const request: IpcRequest = { id, method };
-    if (params) {
-      request.params = params;
-    }
+		const id = `req_${++this.requestCounter}_${Date.now()}`;
 
-    return new Promise<T>((resolve, reject) => {
-      this.pending.set(id, {
-        resolve: resolve as (value: unknown) => void,
-        reject,
-      });
+		const request: IpcRequest = { id, method };
+		if (params) {
+			request.params = params;
+		}
 
-      const message = JSON.stringify(request) + "\n";
-      this.child!.write(message).catch((err: Error) => {
-        this.pending.delete(id);
-        reject(new Error(`Failed to write to sidecar: ${err.message}`));
-      });
+		return new Promise<T>((resolve, reject) => {
+			this.pending.set(id, {
+				resolve: resolve as (value: unknown) => void,
+				reject,
+			});
 
-      setTimeout(() => {
-        if (this.pending.has(id)) {
-          this.pending.delete(id);
-          reject(new Error(`Request ${method} timed out`));
-        }
-      }, 10000);
-    });
-  }
+			const message = JSON.stringify(request) + "\n";
+			this.child!.write(message).catch((err: Error) => {
+				this.pending.delete(id);
+				reject(new Error(`Failed to write to sidecar: ${err.message}`));
+			});
 
-  /**
-   * Kill the sidecar process and clean up.
-   * Serialized: waits for any pending init to finish first.
-   */
-  async destroy(): Promise<void> {
-    this.lifecycleChain = this.lifecycleChain
-      .then(() => this.doDestroy())
-      .catch(() => {
-        /* swallow lifecycle errors so the chain stays healthy */
-      });
-    return this.lifecycleChain;
-  }
+			setTimeout(() => {
+				if (this.pending.has(id)) {
+				this.pending.delete(id);
+				reject(new Error(`Request ${method} timed out`));
+				}
+			}, 10000);
+		});
+	}
 
-  private async doDestroy(): Promise<void> {
-    if (!this.child) return;
+	/**
+	 * Kill the sidecar process and clean up.
+	 * Serialized: waits for any pending init to finish first.
+	 */
+	async destroy(): Promise<void> {
+		this.lifecycleChain = this.lifecycleChain
+			.then(() => this.doDestroy())
+			.catch(() => {
+				/* swallow lifecycle errors so the chain stays healthy */
+			});
+		
+		return this.lifecycleChain;
+	}
 
-    this.destroying = true;
-    this.initialized = false;
-    const childToKill = this.child;
-    this.child = null;
-    this.readyResolve = null;
-    this.pending.clear();
+	private async doDestroy(): Promise<void> {
+		if (!this.child) return;
 
-    try {
-      await childToKill.kill();
-    } catch {
-      // Process may have already exited
-    }
-    // Give the OS time to fully release the process handle
-    await new Promise((r) => setTimeout(r, 50));
-    this.destroying = false;
-  }
+		this.destroying = true;
+		this.initialized = false;
+		const childToKill = this.child;
+		this.child = null;
+		this.readyResolve = null;
+		this.pending.clear();
+
+		try {
+			await childToKill.kill();
+		} catch {
+			// Process may have already exited
+		}
+		// Give the OS time to fully release the process handle
+		await new Promise((r) => setTimeout(r, 50));
+		this.destroying = false;
+	}
 }
 
 // Singleton instance

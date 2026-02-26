@@ -55,3 +55,6 @@ Tauri orchestrates both frontend and backend: `tauri dev` runs `npm run dev` aut
 
 - **Frontend**: React 19, `@tauri-apps/api` v2, `@tauri-apps/plugin-opener` v2, Vite 7
 - **Backend**: Tauri 2, `tauri-plugin-opener`, `serde`/`serde_json` for serialization
+
+## Extra Notes
+- Always use `.editorconfig` settings for consistent formatting. Prettier is configured but not enforced via linting.
