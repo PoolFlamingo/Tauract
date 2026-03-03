@@ -1,7 +1,9 @@
 import { useState, type FormEvent } from "react";
-import { Button } from "../ui/Button";
-import { Input } from "../ui/Input";
-import type { CreateTodoDto, UpdateTodoDto, Todo } from "../../types/todo";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import type { CreateTodoDto, UpdateTodoDto, Todo } from "@/types/todo";
 
 interface TodoFormProps {
   /** If provided, the form is in edit mode */
@@ -13,7 +15,7 @@ interface TodoFormProps {
 export function TodoForm({ editingTodo, onSubmit, onCancel }: TodoFormProps) {
   const [title, setTitle] = useState(editingTodo?.title ?? "");
   const [description, setDescription] = useState(
-    editingTodo?.description ?? ""
+    editingTodo?.description ?? "",
   );
 
   const isEditing = !!editingTodo;
@@ -40,23 +42,35 @@ export function TodoForm({ editingTodo, onSubmit, onCancel }: TodoFormProps) {
   }
 
   return (
-    <form className="todo-form" onSubmit={handleSubmit}>
-      <div className="todo-form__fields">
-        <Input
-          id="todo-title"
-          placeholder="¿Qué necesitas hacer?"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          autoFocus
-        />
-        <Input
-          id="todo-description"
-          placeholder="Descripción (opcional)"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="space-y-3">
+        <div className="space-y-1.5">
+          <Label htmlFor="todo-title" className="sr-only">
+            Título
+          </Label>
+          <Input
+            id="todo-title"
+            placeholder="¿Qué necesitas hacer?"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            autoFocus
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="todo-description" className="sr-only">
+            Descripción
+          </Label>
+          <Textarea
+            id="todo-description"
+            placeholder="Descripción (opcional)"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={2}
+            className="resize-none"
+          />
+        </div>
       </div>
-      <div className="todo-form__actions">
+      <div className="flex items-center gap-2">
         <Button type="submit" disabled={!title.trim()}>
           {isEditing ? "Guardar" : "Añadir"}
         </Button>
