@@ -1,0 +1,30 @@
+{
+  "title": "Task Manager",
+  "form": {
+    "titleLabel": "Title",
+    "titlePlaceholder": "Task title",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Description (optional)",
+    "addButton": "Add",
+    "saveButton": "Save",
+    "cancelButton": "Cancel"
+  },
+  "filters": {
+    "all": "All",
+    "active": "Active",
+    "completed": "Completed",
+    "clearCompleted": "Clear completed"
+  },
+  "list": {
+    "empty": "No tasks yet",
+    "loading": "Loading..."
+  },
+  "item": {
+    "editButton": "Edit task",
+    "deleteButton": "Delete task",
+    "deleteConfirmTitle": "Delete task?",
+    "deleteConfirmDescription": "This action cannot be undone.",
+    "deleteConfirmCancel": "Cancel",
+    "deleteConfirmAction": "Delete"
+  }
+}

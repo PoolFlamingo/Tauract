@@ -1,0 +1,24 @@
+{
+  "settings": {
+    "title": "Configuración",
+    "language": "Idioma",
+    "theme": "Tema",
+    "version": "Versión",
+    "updates": {
+      "title": "Actualizaciones",
+      "checkNow": "Buscar actualizaciones",
+      "checking": "Buscando...",
+      "upToDate": "Tienes la última versión.",
+      "available": "Nueva versión disponible: {{version}}",
+      "downloading": "Descargando actualización...",
+      "downloaded": "Actualización lista para instalar.",
+      "installAndRestart": "Instalar y reiniciar",
+      "downloadAndInstall": "Descargar e instalar",
+      "mode": {
+        "label": "Modo de actualización",
+        "notify": "Sólo notificar",
+        "background": "Descargar en segundo plano"
+      }
+    }
+  }
+}

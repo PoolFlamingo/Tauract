@@ -1,0 +1,11 @@
+{
+  "language": {
+    "es": "Español",
+    "en": "English"
+  },
+  "theme": {
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema"
+  }
+}

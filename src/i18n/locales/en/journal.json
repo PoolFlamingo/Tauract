@@ -1,0 +1,24 @@
+{
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "version": "Version",
+    "updates": {
+      "title": "Updates",
+      "checkNow": "Check for updates",
+      "checking": "Checking...",
+      "upToDate": "You have the latest version.",
+      "available": "New version available: {{version}}",
+      "downloading": "Downloading update...",
+      "downloaded": "Update ready to install.",
+      "installAndRestart": "Install and restart",
+      "downloadAndInstall": "Download and install",
+      "mode": {
+        "label": "Update mode",
+        "notify": "Notify only",
+        "background": "Download in background"
+      }
+    }
+  }
+}

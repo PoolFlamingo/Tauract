@@ -1,0 +1,30 @@
+{
+  "title": "Gestor de tareas",
+  "form": {
+    "titleLabel": "Título",
+    "titlePlaceholder": "Título de la tarea",
+    "descriptionLabel": "Descripción",
+    "descriptionPlaceholder": "Descripción (opcional)",
+    "addButton": "Añadir",
+    "saveButton": "Guardar",
+    "cancelButton": "Cancelar"
+  },
+  "filters": {
+    "all": "Todos",
+    "active": "Activos",
+    "completed": "Completados",
+    "clearCompleted": "Limpiar completados"
+  },
+  "list": {
+    "empty": "No hay tareas todavía",
+    "loading": "Cargando..."
+  },
+  "item": {
+    "editButton": "Editar tarea",
+    "deleteButton": "Eliminar tarea",
+    "deleteConfirmTitle": "¿Eliminar tarea?",
+    "deleteConfirmDescription": "Esta acción no se puede deshacer.",
+    "deleteConfirmCancel": "Cancelar",
+    "deleteConfirmAction": "Eliminar"
+  }
+}
