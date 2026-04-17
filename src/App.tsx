@@ -1,8 +1,10 @@
 import { useTodos } from "@/hooks/useTodos";
+import { useTranslation } from "react-i18next";
 import { TodoForm } from "@/components/todo/TodoForm";
 import { TodoFilters } from "@/components/todo/TodoFilters";
 import { TodoList } from "@/components/todo/TodoList";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageToggle } from "@/components/language-toggle";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
@@ -10,6 +12,7 @@ import { AlertCircle } from "lucide-react";
 import type { CreateTodoDto, UpdateTodoDto } from "@/types/todo";
 
 function App() {
+	const { t } = useTranslation("todo");
 	const {
 		filteredTodos,
 		filter,
@@ -71,10 +74,13 @@ function App() {
 					<div>
 						<h1 className="text-3xl font-bold tracking-tight">Tauract</h1>
 						<p className="text-sm text-muted-foreground">
-							Gestor de tareas
+							{t("title")}
 						</p>
 					</div>
-					<ThemeToggle />
+					<div className="flex items-center gap-2">
+						<LanguageToggle />
+						<ThemeToggle />
+					</div>
 				</header>
 
 				{error && (

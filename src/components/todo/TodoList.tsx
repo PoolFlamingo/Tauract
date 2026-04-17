@@ -1,4 +1,5 @@
 import { ClipboardList } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { Todo, UpdateTodoDto } from "@/types/todo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TodoItem } from "./TodoItem";
@@ -18,6 +19,7 @@ export function TodoList({
   onEdit,
   onDelete,
 }: TodoListProps) {
+  const { t } = useTranslation("todo");
   if (loading) {
     return (
       <div className="space-y-3">
@@ -39,10 +41,10 @@ export function TodoList({
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <ClipboardList className="h-12 w-12 text-muted-foreground/50" />
         <p className="mt-4 text-sm font-medium text-muted-foreground">
-          No hay tareas todavía
+          {t("list.empty")}
         </p>
         <p className="mt-1 text-xs text-muted-foreground/70">
-          Añade una nueva tarea usando el formulario de arriba
+          {t("list.emptySubtitle")}
         </p>
       </div>
     );

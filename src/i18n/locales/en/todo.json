@@ -2,7 +2,7 @@
   "title": "Task Manager",
   "form": {
     "titleLabel": "Title",
-    "titlePlaceholder": "Task title",
+    "titlePlaceholder": "What needs to be done?",
     "descriptionLabel": "Description",
     "descriptionPlaceholder": "Description (optional)",
     "addButton": "Add",
@@ -17,13 +17,16 @@
   },
   "list": {
     "empty": "No tasks yet",
+    "emptySubtitle": "Add a new task using the form above",
     "loading": "Loading..."
   },
   "item": {
+    "markAsPending": "Mark \"{{title}}\" as pending",
+    "markAsCompleted": "Mark \"{{title}}\" as completed",
     "editButton": "Edit task",
     "deleteButton": "Delete task",
-    "deleteConfirmTitle": "Delete task?",
-    "deleteConfirmDescription": "This action cannot be undone.",
+    "deleteConfirmTitle": "Delete task",
+    "deleteConfirmDescription": "Are you sure you want to delete \"{{title}}\"? This action cannot be undone.",
     "deleteConfirmCancel": "Cancel",
     "deleteConfirmAction": "Delete"
   }

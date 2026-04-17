@@ -1,9 +1,11 @@
 {
   "language": {
+    "toggle": "Change language",
     "es": "Spanish",
     "en": "English"
   },
   "theme": {
+    "toggle": "Change theme",
     "light": "Light",
     "dark": "Dark",
     "system": "System"

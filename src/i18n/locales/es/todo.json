@@ -2,7 +2,7 @@
   "title": "Gestor de tareas",
   "form": {
     "titleLabel": "Título",
-    "titlePlaceholder": "Título de la tarea",
+    "titlePlaceholder": "¿Qué necesitas hacer?",
     "descriptionLabel": "Descripción",
     "descriptionPlaceholder": "Descripción (opcional)",
     "addButton": "Añadir",
@@ -17,13 +17,16 @@
   },
   "list": {
     "empty": "No hay tareas todavía",
+    "emptySubtitle": "Añade una nueva tarea usando el formulario de arriba",
     "loading": "Cargando..."
   },
   "item": {
+    "markAsPending": "Marcar \"{{title}}\" como pendiente",
+    "markAsCompleted": "Marcar \"{{title}}\" como completada",
     "editButton": "Editar tarea",
     "deleteButton": "Eliminar tarea",
-    "deleteConfirmTitle": "¿Eliminar tarea?",
-    "deleteConfirmDescription": "Esta acción no se puede deshacer.",
+    "deleteConfirmTitle": "Eliminar tarea",
+    "deleteConfirmDescription": "¿Seguro que quieres eliminar \"{{title}}\"? Esta acción no se puede deshacer.",
     "deleteConfirmCancel": "Cancelar",
     "deleteConfirmAction": "Eliminar"
   }
