@@ -9,8 +9,8 @@ import enTodo from "./locales/en/todo.json";
 import enJournal from "./locales/en/journal.json";
 
 i18next.use(initReactI18next).init({
-	lng: "es",
-	fallbackLng: ["es"],
+	lng: "en",
+	fallbackLng: ["en"],
 	ns: ["common", "todo", "journal"],
 	defaultNS: "common",
 	resources: {

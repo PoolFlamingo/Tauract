@@ -43,20 +43,20 @@ Inside `src/i18n/i18n.ts`, the app:
 
 - imports `i18next`;
 - installs the `initReactI18next` adapter;
-- registers Spanish and English resources;
+- registers English and Spanish resources;
 - defines the available namespaces;
-- sets the initial language to Spanish.
+- sets the initial language to English.
 
 Current initialization details:
 
-- `lng: "es"`
-- `fallbackLng: ["es"]`
+- `lng: "en"`
+- `fallbackLng: ["en"]`
 - `ns: ["common", "todo", "journal"]`
 - `defaultNS: "common"`
 - `react.useSuspense: false`
 - `interpolation.escapeValue: false`
 
-This means the application always starts from a valid Spanish baseline even before user preferences or OS locale detection have been resolved.
+This means the application always starts from a valid English baseline even before user preferences or OS locale detection have been resolved.
 
 ### Phase 2: Runtime language resolution
 
@@ -67,7 +67,7 @@ The provider resolves the final runtime language in this order:
 1. Read the previously saved language from `settings.json`.
 2. If nothing is saved, inspect the system locale through `@tauri-apps/plugin-os`.
 3. If the Tauri OS API is unavailable, fall back to the browser locale via `navigator.language` or `navigator.languages[0]`.
-4. If none of the above yields a supported value, default to Spanish.
+4. If none of the above yields a supported value, default to English.
 
 Once a supported language is found, the provider calls `await i18n.changeLanguage(nextLanguage)` and stores that value in React state.
 
@@ -170,7 +170,7 @@ Behavior summary:
 
 - in Tauri desktop mode, OS locale is the preferred runtime default;
 - in plain frontend mode, browser locale becomes the fallback detector;
-- if neither resolves to `es` or `en`, Spanish is used.
+- if neither resolves to `es` or `en`, English is used.
 
 ## React Provider Design
 
@@ -303,7 +303,7 @@ Fallback behavior works at several levels:
 
 - if no saved preference exists, use system locale;
 - if system locale cannot be resolved, use browser locale;
-- if browser locale is unsupported, use Spanish;
+- if browser locale is unsupported, use English;
 - if persistence fails, keep the selected language in memory;
 - if a component uses the provider hook outside the provider tree, throw immediately.
 
@@ -323,9 +323,9 @@ All translation catalogs are bundled at startup. This keeps the system simple, b
 
 For a two-language desktop app, this tradeoff is reasonable.
 
-### Spanish is the hard fallback
+### English is the hard fallback
 
-Even if the user machine runs in another language, unsupported locales fall back to Spanish rather than English. That is a deliberate product choice embedded in the current config.
+Even if the user machine runs in another language, unsupported locales fall back to English rather than Spanish. That is a deliberate product choice embedded in the current config.
 
 ### No runtime translation validation
 
@@ -360,7 +360,7 @@ The multilingual system in My Journal is implemented as a frontend-centered, sta
 The essential behavior is:
 
 - initialize `i18next` with Spanish and English resources;
-- boot into Spanish safely;
+- boot into English safely;
 - resolve saved preference or system locale asynchronously;
 - expose the result through React context;
 - let components read strings with `useTranslation(...)`;
