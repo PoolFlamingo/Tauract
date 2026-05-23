@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import * as todoApi from "../services/todoApi";
 import type { Todo, CreateTodoDto, UpdateTodoDto, TodoFilter } from "../types/todo";
-import { sidecar } from "../services/sidecar";
 
 interface UseTodosReturn {
   todos: Todo[];
@@ -26,12 +25,10 @@ export function useTodos(): UseTodosReturn {
   const [error, setError] = useState<string | null>(null);
   const mountedRef = useRef(true);
 
-  // Initialize sidecar and load todos
   const loadTodos = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      await sidecar.init();
       const result = await todoApi.listTodos();
       if (mountedRef.current) {
         setTodos(result);
@@ -52,7 +49,6 @@ export function useTodos(): UseTodosReturn {
     loadTodos();
     return () => {
       mountedRef.current = false;
-      sidecar.destroy();
     };
   }, [loadTodos]);
 

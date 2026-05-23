@@ -114,7 +114,7 @@ function App() {
 
 				<footer className="mt-8 text-center">
 					<p className="text-xs text-muted-foreground">
-						Tauri + React + Bun + SQLite
+						Tauri + React + SQLite
 					</p>
 				</footer>
 			</div>

@@ -6,26 +6,23 @@
   "permissions": [
     "core:default",
     "opener:default",
+    "sql:default",
     {
-      "identifier": "shell:allow-spawn",
-      "allow": [
-        {
-          "name": "binaries/db-sidecar",
-          "sidecar": true,
-          "args": true
-        }
-      ]
+      "identifier": "sql:allow-load",
+      "allow": [{ "url": "sqlite:todos.db" }]
     },
     {
-      "identifier": "shell:allow-stdin-write",
-      "allow": [
-        {
-          "name": "binaries/db-sidecar",
-          "sidecar": true
-        }
-      ]
+      "identifier": "sql:allow-execute",
+      "allow": [{ "url": "sqlite:todos.db" }]
     },
-    "shell:allow-kill",
+    {
+      "identifier": "sql:allow-select",
+      "allow": [{ "url": "sqlite:todos.db" }]
+    },
+    {
+      "identifier": "sql:allow-close",
+      "allow": [{ "url": "sqlite:todos.db" }]
+    },
     "updater:default",
     "process:allow-restart",
     "store:default",

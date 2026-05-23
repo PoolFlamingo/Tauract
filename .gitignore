@@ -24,10 +24,6 @@ dist-ssr
 *.sln
 *.sw?
 
-# Sidecar compiled binaries
-src-tauri/binaries/*.exe
-src-tauri/binaries/db-sidecar-*
-
 # SQLite dev databases
 *.db
 *.sqlite
